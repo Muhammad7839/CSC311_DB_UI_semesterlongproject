@@ -11,8 +11,8 @@ public class DbConnectivityClass {
         MyLogger lg= new MyLogger();
         final static String SQL_SERVER_URL = "jdbc:mysql://server.mariadb.database.azure.com";//update this server name
         final static String DB_URL = "jdbc:mysql://server.mariadb.database.azure.com/"+DB_NAME;//update this database name
-        final static String USERNAME = "csc311admin@server";// update this username
-        final static String PASSWORD = "FARM";// update this password
+        final static String USERNAME = "muhammad";// update this username
+        final static String PASSWORD = "farm123$";// update this password
 
 
         private final ObservableList<Person> data = FXCollections.observableArrayList();
