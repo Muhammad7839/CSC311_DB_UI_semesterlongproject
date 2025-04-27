@@ -59,13 +59,10 @@ public class LoginController {
         }
 
         if (SessionManager.getInstance().validateCredentials(email, password)) {
-            SessionManager.getInstance().setActiveUser(email);
+            SessionManager.getInstance().setActiveUser(email); // ✅ Set active user and save to Preferences
 
             try {
-                FXMLLoader loader = new FXMLLoader();
-                loader.setLocation(getClass().getResource("/view/db_interface_gui.fxml"));
-                Parent root = loader.load();
-
+                Parent root = FXMLLoader.load(getClass().getResource("/view/db_interface_gui.fxml"));
                 Scene scene = new Scene(root, 900, 600);
                 scene.getStylesheets().add(getClass().getResource("/css/lightTheme.css").toExternalForm());
                 Stage window = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();

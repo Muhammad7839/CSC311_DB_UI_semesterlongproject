@@ -209,6 +209,7 @@ public class DbConnectivityClass {
             }
         }
 
+
         //Method to retrieve id from database where it is auto-incremented.
         public int retrieveId(Person p) {
             connectToDatabase();
@@ -231,4 +232,5 @@ public class DbConnectivityClass {
             lg.makeLog(String.valueOf(id));
             return id;
         }
+
     }

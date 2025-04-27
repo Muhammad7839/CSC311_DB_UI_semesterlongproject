@@ -1,5 +1,7 @@
 package viewmodel;
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfWriter;
 import dao.DbConnectivityClass;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -14,12 +16,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.MajorEnum;
@@ -27,6 +29,8 @@ import model.Person;
 
 import java.io.*;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
@@ -61,7 +65,33 @@ public class DB_GUI_Controller implements Initializable {
         tv_email.setCellValueFactory(new PropertyValueFactory<>("email"));
         tv.setItems(data);
 
+        tv.setEditable(true);
+        tv_fn.setCellFactory(TextFieldTableCell.forTableColumn());
+        tv_ln.setCellFactory(TextFieldTableCell.forTableColumn());
+        tv_department.setCellFactory(TextFieldTableCell.forTableColumn());
+        tv_major.setCellFactory(TextFieldTableCell.forTableColumn());
+        tv_email.setCellFactory(TextFieldTableCell.forTableColumn());
+
         majorComboBox.setItems(FXCollections.observableArrayList(MajorEnum.values()));
+
+        validateInputs();
+
+        addBtn.disableProperty().bind(
+                isFirstNameValid.not()
+                        .or(isLastNameValid.not())
+                        .or(isDepartmentValid.not())
+                        .or(isEmailValid.not())
+                        .or(isMajorSelected.not())
+        );
+
+        editItem.setDisable(true);
+        deleteItem.setDisable(true);
+
+        tv.setOnMouseClicked(e -> {
+            boolean rowSelected = tv.getSelectionModel().getSelectedItem() != null;
+            editItem.setDisable(!rowSelected);
+            deleteItem.setDisable(!rowSelected);
+        });
 
         Platform.runLater(() -> {
             Scene scene = menuBar.getScene();
@@ -83,25 +113,10 @@ public class DB_GUI_Controller implements Initializable {
                         }
                     }
                 });
+
+                Stage stage = (Stage) scene.getWindow();
+                stage.setTitle("Student Registration System");
             }
-        });
-
-        validateInputs();
-
-        addBtn.disableProperty().bind(
-                isFirstNameValid.not()
-                        .or(isLastNameValid.not())
-                        .or(isDepartmentValid.not())
-                        .or(isEmailValid.not())
-                        .or(isMajorSelected.not())
-        );
-
-        editItem.setDisable(true);
-        deleteItem.setDisable(true);
-        tv.setOnMouseClicked(e -> {
-            boolean rowSelected = tv.getSelectionModel().getSelectedItem() != null;
-            editItem.setDisable(!rowSelected);
-            deleteItem.setDisable(!rowSelected);
         });
     }
 
@@ -183,6 +198,29 @@ public class DB_GUI_Controller implements Initializable {
         }
     }
 
+    @FXML protected void updateCellEdit(TableColumn.CellEditEvent<Person, String> event) {
+        Person selected = tv.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            TableColumn<Person, ?> col = event.getTableColumn();
+            String newValue = event.getNewValue();
+
+            if (col == tv_fn) {
+                selected.setFirstName(newValue);
+            } else if (col == tv_ln) {
+                selected.setLastName(newValue);
+            } else if (col == tv_department) {
+                selected.setDepartment(newValue);
+            } else if (col == tv_major) {
+                selected.setMajor(newValue);
+            } else if (col == tv_email) {
+                selected.setEmail(newValue);
+            }
+
+            cnUtil.editUser(selected.getId(), selected);
+            showStatus("Record updated from table edit.");
+        }
+    }
+
     @FXML protected void showImage() {
         File file = new FileChooser().showOpenDialog(img_view.getScene().getWindow());
         if (file != null) {
@@ -237,6 +275,39 @@ public class DB_GUI_Controller implements Initializable {
             } catch (IOException e) {
                 e.printStackTrace();
                 showStatus("Import failed.");
+            }
+        }
+    }
+
+    @FXML protected void generatePdfReport() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save PDF Report");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        File file = fileChooser.showSaveDialog(tv.getScene().getWindow());
+
+        if (file != null) {
+            Map<String, Integer> majorCount = new HashMap<>();
+
+            for (Person p : data) {
+                majorCount.put(p.getMajor(), majorCount.getOrDefault(p.getMajor(), 0) + 1);
+            }
+
+            try {
+                Document document = new Document();
+                PdfWriter.getInstance(document, new FileOutputStream(file));
+                document.open();
+                document.add(new Paragraph("Student Count by Major"));
+                document.add(new Paragraph(" "));
+
+                for (Map.Entry<String, Integer> entry : majorCount.entrySet()) {
+                    document.add(new Paragraph(entry.getKey() + ": " + entry.getValue()));
+                }
+
+                document.close();
+                showStatus("PDF report generated.");
+            } catch (Exception e) {
+                e.printStackTrace();
+                showStatus("PDF generation failed.");
             }
         }
     }

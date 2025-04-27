@@ -10,6 +10,7 @@
             fx:controller="viewmodel.DB_GUI_Controller">
     <children>
         <BorderPane fx:id="borderPane" prefHeight="597.0" prefWidth="908.0">
+
             <top>
                 <MenuBar fx:id="menuBar" prefHeight="28.0" prefWidth="913.0" styleClass="menu_bar" BorderPane.alignment="CENTER">
                     <menus>
@@ -25,16 +26,16 @@
                         </Menu>
                         <Menu text="Edit" styleClass="menu_options">
                             <items>
-                                <MenuItem fx:id="editMenuItem" onAction="#editRecord" text="_Edit       Ctrl+E" mnemonicParsing="true" styleClass="menu_items"/>
-                                <MenuItem fx:id="deleteMenuItem" onAction="#deleteRecord" text="_Delete        Ctrl+D" mnemonicParsing="true" styleClass="menu_items"/>
-                                <MenuItem fx:id="ClearItem" onAction="#clearForm" text="Clea_r        Ctrl+R" styleClass="menu_items"/>
-                                <MenuItem fx:id="CopyItem" text="_Copy       Ctrl+C" styleClass="menu_items"/>
+                                <MenuItem fx:id="editMenuItem" onAction="#editRecord" text="_Edit Ctrl+E" mnemonicParsing="true" styleClass="menu_items"/>
+                                <MenuItem fx:id="deleteMenuItem" onAction="#deleteRecord" text="_Delete Ctrl+D" mnemonicParsing="true" styleClass="menu_items"/>
+                                <MenuItem fx:id="ClearItem" onAction="#clearForm" text="Clear Ctrl+R" styleClass="menu_items"/>
+                                <MenuItem fx:id="CopyItem" text="Copy Ctrl+C" styleClass="menu_items"/>
                             </items>
                         </Menu>
                         <Menu text="Theme" styleClass="menu_options">
                             <items>
-                                <MenuItem onAction="#lightTheme" text="LIGHT THEME" styleClass="menu_items"/>
-                                <MenuItem onAction="#darkTheme" text="DARK THEME" styleClass="menu_items"/>
+                                <MenuItem onAction="#lightTheme" text="Light Theme" styleClass="menu_items"/>
+                                <MenuItem onAction="#darkTheme" text="Dark Theme" styleClass="menu_items"/>
                             </items>
                         </Menu>
                         <Menu text="Help" styleClass="menu_options">
@@ -52,7 +53,8 @@
                     <children>
                         <AnchorPane prefHeight="215.0" prefWidth="88.0">
                             <children>
-                                <ImageView fx:id="img_view" fitHeight="111.0" fitWidth="122.0" layoutX="10.0" layoutY="11.0" onMouseClicked="#showImage" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
+                                <ImageView fx:id="img_view" fitHeight="111.0" fitWidth="122.0" layoutX="10.0" layoutY="11.0"
+                                           onMouseClicked="#showImage" pickOnBounds="true" preserveRatio="true" styleClass="image_view">
                                     <image>
                                         <Image url="@../images/profile.png" />
                                     </image>
@@ -79,32 +81,34 @@
                         <TextField fx:id="department" promptText="Department" styleClass="text_field"/>
                         <ComboBox fx:id="majorComboBox" promptText="Select Major" styleClass="text_field"/>
                         <TextField fx:id="email" promptText="Email" styleClass="text_field"/>
-                        <TextField fx:id="imageURL" promptText="imageURL" styleClass="text_field"/>
-                        <Label text=" "/>
+                        <TextField fx:id="imageURL" promptText="Image URL" styleClass="text_field"/>
+
                         <Button fx:id="clearBtn" onAction="#clearForm" text="Clear" styleClass="db_btn"/>
                         <Button fx:id="addBtn" onAction="#addNewRecord" text="Add" styleClass="db_btn"/>
                         <Button fx:id="deleteBtn" onAction="#deleteRecord" text="Delete" styleClass="db_btn"/>
                         <Button fx:id="editBtn" onAction="#editRecord" text="Edit" styleClass="db_btn"/>
+                        <Button fx:id="generatePdfBtn" onAction="#generatePdfReport" text="Generate PDF Report" styleClass="db_btn"/>
                     </children>
                 </VBox>
             </right>
 
             <center>
-                <TableView fx:id="tv" onMouseClicked="#selectedItemTV" styleClass="table_view" BorderPane.alignment="CENTER">
+                <TableView fx:id="tv" onMouseClicked="#selectedItemTV" editable="true" styleClass="table_view" BorderPane.alignment="CENTER">
                     <columns>
                         <TableColumn fx:id="tv_id" text="ID" styleClass="table_columns"/>
-                        <TableColumn fx:id="tv_fn" text="First Name" styleClass="table_columns"/>
-                        <TableColumn fx:id="tv_ln" text="Last Name" styleClass="table_columns"/>
-                        <TableColumn fx:id="tv_department" text="Department" styleClass="table_columns"/>
-                        <TableColumn fx:id="tv_major" text="Major" styleClass="table_columns"/>
-                        <TableColumn fx:id="tv_email" text="Email" styleClass="table_columns"/>
+                        <TableColumn fx:id="tv_fn" text="First Name" styleClass="table_columns" onEditCommit="#updateCellEdit"/>
+                        <TableColumn fx:id="tv_ln" text="Last Name" styleClass="table_columns" onEditCommit="#updateCellEdit"/>
+                        <TableColumn fx:id="tv_department" text="Department" styleClass="table_columns" onEditCommit="#updateCellEdit"/>
+                        <TableColumn fx:id="tv_major" text="Major" styleClass="table_columns" onEditCommit="#updateCellEdit"/>
+                        <TableColumn fx:id="tv_email" text="Email" styleClass="table_columns" onEditCommit="#updateCellEdit"/>
                     </columns>
                 </TableView>
             </center>
 
             <padding>
-                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
             </padding>
+
         </BorderPane>
     </children>
 </AnchorPane>

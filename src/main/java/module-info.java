@@ -3,6 +3,8 @@ module com.example.csc311_db_ui_semesterlongproject {
     requires javafx.fxml;
     requires java.sql;
     requires java.prefs;
+    requires itextpdf;
+
 
 
     opens viewmodel;
